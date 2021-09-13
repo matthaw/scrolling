@@ -1,38 +1,27 @@
-import * as React from "react"
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+import React from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
+import { theme } from '@chakra-ui/theme';
+import { useDisclosure } from '@chakra-ui/hooks';
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
-  </ChakraProvider>
-)
+import { Navbar } from './components/navbar';
+import { SidebarContext } from './hooks/useSidebar';
+import { Sidebar } from './components/drawer';
+import { Cards } from './components/cards';
+import { useFilter, FilterContext } from './hooks/useFilter';
+
+export const App = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { filter, setFilter } = useFilter();
+
+  return (
+    <ChakraProvider theme={theme}>
+      <SidebarContext.Provider value={{ isOpen, onOpen, onClose }}>
+        <FilterContext.Provider value={{ filter, setFilter }}>
+          <Navbar />
+          <Sidebar />
+          <Cards />
+        </FilterContext.Provider>
+      </SidebarContext.Provider>
+    </ChakraProvider>
+  );
+};
