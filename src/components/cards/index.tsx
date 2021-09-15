@@ -1,37 +1,39 @@
 import { Grid } from '@chakra-ui/layout';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { useFilter } from '../../hooks/useFilter';
-import { request } from '../../lib/reddit';
+import { usePosts } from '../../hooks/usePosts';
 import { Card } from '../card';
-
-interface CardProps {
-  id: string;
-  url: string;
-  permalink: string;
-  title: string;
-}
 
 function Cards() {
   const { filter, setFilter } = useFilter();
-  const [data, setData] = useState<CardProps[]>([]);
+  const { posts, setPosts } = usePosts();
 
-  useEffect(() => {
-    request({ name: 'gifs', filter }).then((req) => {
-      console.log(req);
-    });
-  }, []);
+  function renderPosts(): ReactNode {
+    if (posts.length >= 1) {
+      return posts.map((post) => (
+        <Card
+          key={post.id}
+          id={post.id}
+          title={post.title}
+          permalink={post.permalink}
+          reddit={post.reddit}
+          url={post.url}
+        />
+      ));
+    }
+
+    let card: ReactNode[] = [];
+
+    for (let i = 0; i < 9; i++) {
+      card.push(<Card key={i} />);
+    }
+
+    return card;
+  }
 
   return (
-    <Grid gridTemplateColumns="repeat(4, 1fr)">
-      {data.map((info) => (
-        <Card
-          key={info.id}
-          id={info.id}
-          title={info.title}
-          permalink={info.permalink}
-          url={info.url}
-        />
-      ))}
+    <Grid gridTemplateColumns="repeat(4, 1fr)" overflowX="hidden">
+      {renderPosts()}
     </Grid>
   );
 }
