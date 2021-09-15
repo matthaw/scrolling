@@ -18,6 +18,7 @@ function Cards() {
           permalink={post.permalink}
           reddit={post.reddit}
           url={post.url}
+          media={post.media}
         />
       ));
     }
