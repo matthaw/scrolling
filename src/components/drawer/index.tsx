@@ -39,10 +39,22 @@ function Sidebar() {
 
   function remove(favorite: string) {
     setFavorite(favorites.filter((_, i) => i !== favorites.indexOf(favorite)));
+
+    localStorage.removeItem('@scroller/favorites');
+    localStorage.setItem(
+      '@scroller/favorites',
+      favorites.filter((_, i) => i !== favorites.indexOf(favorite)).join(',')
+    );
   }
 
   function append(favorite: string) {
     setFavorite([...favorites, favorite]);
+
+    localStorage.removeItem('@scroller/favorites');
+    localStorage.setItem(
+      '@scroller/favorites',
+      [...favorites, favorite].join(',')
+    );
   }
 
   function focusBorderColor() {
@@ -108,7 +120,7 @@ function Sidebar() {
 
               <Stack>
                 <Text fontSize="lg">Favorite</Text>
-                {favorites.length >= 1 &&
+                {favorites &&
                   favorites.map((favorite) => (
                     <Stack
                       direction="row"

@@ -10,23 +10,33 @@ import { Cards } from './components/cards';
 import { useFilter, FilterContext } from './hooks/useFilter';
 import { PostsContext } from './hooks/usePosts';
 import { Posts, request } from './lib/reddit';
+import { FavoriteContext } from './hooks/useFavorite';
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { filter, setFilter } = useFilter();
   const [posts, setPosts] = useState<Posts[]>([]);
+  const [favorites, setFavorite] = useState<Array<string>>([]);
 
   useEffect(() => {
     async function fetch() {
       try {
         const posts = await request({ name: 'gifs', filter });
         setPosts(posts);
-        console.log(posts);
       } catch (err) {
         console.error(err);
       }
     }
+
     fetch();
+
+    const load = localStorage.getItem('@scroller/favorites')?.split(',');
+
+    if (!load) {
+      setFavorite(['gifs']);
+    } else {
+      setFavorite(load);
+    }
   }, []);
 
   return (
@@ -34,10 +44,12 @@ export const App = () => {
       <SidebarContext.Provider value={{ isOpen, onOpen, onClose }}>
         <FilterContext.Provider value={{ filter, setFilter }}>
           <Navbar />
-          <Sidebar />
-          <PostsContext.Provider value={{ posts, setPosts }}>
-            <Cards />
-          </PostsContext.Provider>
+          <FavoriteContext.Provider value={{ favorites, setFavorite }}>
+            <Sidebar />
+            <PostsContext.Provider value={{ posts, setPosts }}>
+              <Cards />
+            </PostsContext.Provider>
+          </FavoriteContext.Provider>
         </FilterContext.Provider>
       </SidebarContext.Provider>
     </ChakraProvider>
