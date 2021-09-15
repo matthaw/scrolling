@@ -7,6 +7,7 @@ import {
   Link,
   Skeleton,
   useColorModeValue,
+  AspectRatio,
 } from '@chakra-ui/react';
 import { Posts } from '../../lib/reddit';
 
@@ -18,21 +19,19 @@ interface PostsProps extends Partial<Posts> {}
 
 function Card({ url, permalink, title, reddit, media }: PostsProps) {
   function renderMedia(url: string, type: string) {
-    if (type == 'video') {
+    if (type === 'video') {
       return (
-        <iframe src={url} scrolling="no" width="100%" height="100%"></iframe>
+        <AspectRatio height="100%" width="100%" ratio={1}>
+          <iframe src={url} scrolling="no" width="100%" height="100%" />
+        </AspectRatio>
       );
     }
 
-    if (type == 'image') {
+    if (type === 'image') {
       return (
-        <Image
-          src={url}
-          roundedTop="lg"
-          scrolling="no"
-          width="100%"
-          height="100%"
-        />
+        <AspectRatio height="100%" width="100%" ratio={1}>
+          <Image src={url} scrolling="no" width="100%" height="100%" />
+        </AspectRatio>
       );
     }
   }
@@ -57,7 +56,7 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
         }}
       >
         <Box width={300} height={400}>
-          {url && renderMedia(url, media?.oembed?.type as string)}
+          {url && media?.oembed?.type && renderMedia(url, media?.oembed?.type)}
 
           {!url && (
             <Skeleton
@@ -77,8 +76,13 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
           {title && <Text fontWeight="bold">{formateTitle(title)}</Text>}
           {!title && <Skeleton width="80%" height="20px" />}
 
-          <Flex mt="1" justifyContent="space-between" alignContent="center">
-            <Text fontSize="sm" display="inline-flex" width="130px">
+          <Flex
+            mt="1"
+            alignContent="center"
+            display="inline-flex"
+            width="200px"
+          >
+            <Text fontSize="sm">
               Visit post{' '}
               {reddit && (
                 <Link
@@ -90,8 +94,8 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
                   {reddit}
                 </Link>
               )}
-              {!reddit && <Skeleton ml="1" width="50%" height="18px" />}
             </Text>
+            {!reddit && <Skeleton ml="1" width="40%" height="18px" />}
           </Flex>
         </Box>
       </Box>
