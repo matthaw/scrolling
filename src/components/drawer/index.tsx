@@ -1,9 +1,8 @@
-import React from "react";
-import { Button } from "@chakra-ui/button";
-import { FormLabel } from "@chakra-ui/form-control";
-import { Icon } from "@chakra-ui/icons";
-import { InputGroup, Input, InputLeftAddon } from "@chakra-ui/input";
-import { Box, HStack, VStack, Stack, Text } from "@chakra-ui/layout";
+import React, { useEffect, useState } from 'react';
+import { Button } from '@chakra-ui/button';
+import { Icon } from '@chakra-ui/icons';
+import { InputGroup, Input, InputLeftAddon } from '@chakra-ui/input';
+import { Box, Stack, Text } from '@chakra-ui/layout';
 import {
   Drawer,
   DrawerBody,
@@ -12,14 +11,43 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-} from "@chakra-ui/modal";
-import { FcReddit } from "react-icons/fc";
-import { AiFillStar } from "react-icons/ai";
+} from '@chakra-ui/modal';
+import { FcReddit } from 'react-icons/fc';
+import { AiFillStar } from 'react-icons/ai';
 
-import { useSidebar } from "../../hooks/useSidebar";
+import { useSidebar } from '../../hooks/useSidebar';
+import { useFavorite } from '../../hooks/useFavorite';
+import { exists } from '../../lib/reddit';
 
 function Sidebar() {
   const { isOpen, onOpen, onClose } = useSidebar();
+  const { favorites, setFavorite } = useFavorite();
+  const [subReddit, setSubReddit] = useState('');
+  const [subRedditErro, setSubRedditErro] = useState(false);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      try {
+        exists(subReddit);
+      } catch (err) {
+        console.log(err);
+      }
+    }, 2000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [subReddit]);
+
+  function remove(favorite: string) {
+    setFavorite(favorites.filter((_, i) => i !== favorites.indexOf(favorite)));
+  }
+
+  function append(favorite: string) {
+    setFavorite([...favorites, favorite]);
+  }
+
+  function focusBorderColor() {
+    return subRedditErro ? 'red.400' : 'green.400';
+  }
 
   return (
     <>
@@ -42,59 +70,65 @@ function Sidebar() {
                     type="text"
                     id="reddit"
                     placeholder="Please enter reddit or user"
+                    focusBorderColor={focusBorderColor()}
+                    onKeyUp={(event) => {
+                      const target = event.target as HTMLInputElement;
+                      setSubReddit(target.value);
+                    }}
                   />
                 </InputGroup>
+                {subRedditErro && (
+                  <Text
+                    color="red.400"
+                    fontWeight="bold"
+                    fontSize="x-small"
+                    mt="1%"
+                    ml="40%"
+                  >
+                    Reddit or User not found
+                  </Text>
+                )}
               </Box>
 
-              <Stack direction="row" justifyContent={"space-between"}>
-                <Text fontSize="sm">r/stalker</Text>
-                <Icon
-                  as={AiFillStar}
-                  w={5}
-                  h={5}
-                  cursor={"pointer"}
-                  _hover={{ transition: "color 0.4s", color: "yellow.300" }}
-                />
-              </Stack>
+              {subReddit && (
+                <Stack direction="row" justifyContent={'space-between'}>
+                  <Text fontSize="sm">{subReddit}</Text>
+                  <Icon
+                    as={AiFillStar}
+                    w={5}
+                    h={5}
+                    cursor={'pointer'}
+                    _hover={{ transition: 'color 0.4s', color: 'yellow.300' }}
+                    onClick={() => {
+                      append(subReddit);
+                    }}
+                  />
+                </Stack>
+              )}
 
               <Stack>
                 <Text fontSize="lg">Favorite</Text>
-
-                <Stack direction="row" justifyContent={"space-between"}>
-                  <Text fontSize="sm">r/stalker</Text>
-                  <Icon
-                    as={AiFillStar}
-                    w={5}
-                    h={5}
-                    color={"yellow.300"}
-                    cursor={"pointer"}
-                    _hover={{ transition: "color 0.4s", color: "Black" }}
-                  />
-                </Stack>
-
-                <Stack direction="row" justifyContent={"space-between"}>
-                  <Text fontSize="sm">r/Brasil</Text>
-                  <Icon
-                    as={AiFillStar}
-                    w={5}
-                    h={5}
-                    color={"yellow.300"}
-                    cursor={"pointer"}
-                    _hover={{ transition: "color 0.4s", color: "Black" }}
-                  />
-                </Stack>
-
-                <Stack direction="row" justifyContent={"space-between"}>
-                  <Text fontSize="sm">r/linux</Text>
-                  <Icon
-                    as={AiFillStar}
-                    w={5}
-                    h={5}
-                    color={"yellow.300"}
-                    cursor={"pointer"}
-                    _hover={{ transition: "color 0.4s", color: "Black" }}
-                  />
-                </Stack>
+                {favorites.length >= 1 &&
+                  favorites.map((favorite) => (
+                    <Stack
+                      direction="row"
+                      justifyContent={'space-between'}
+                      key={favorite}
+                    >
+                      <Text fontSize="sm">r/{favorite}</Text>
+                      <Icon
+                        as={AiFillStar}
+                        w={5}
+                        h={5}
+                        onClick={() => {
+                          remove(favorite);
+                        }}
+                        color={'yellow.300'}
+                        cursor={'pointer'}
+                        _hover={{ transition: 'color 0.4s', color: 'Black' }}
+                      />
+                    </Stack>
+                  ))}
               </Stack>
             </Stack>
           </DrawerBody>
@@ -104,9 +138,9 @@ function Sidebar() {
               Cancel
             </Button>
             <Button
-              bg={"orange.400"}
-              color={"white"}
-              _hover={{ bg: "orange.500" }}
+              bg={'orange.400'}
+              color={'white'}
+              _hover={{ bg: 'orange.500' }}
             >
               Save
             </Button>
