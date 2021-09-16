@@ -1,35 +1,32 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Flex,
   Box,
   Image,
-  Text,
-  Link,
   Skeleton,
   useColorModeValue,
   AspectRatio,
 } from '@chakra-ui/react';
 import { Posts } from '../../lib/reddit';
-
-function formateTitle(text: string) {
-  return text.length >= 100 ? text.slice(0, 70) + ' ...' : text;
-}
+import { useModal } from '../../hooks/useModal';
 
 interface PostsProps extends Partial<Posts> {}
 
 function Card({ url, permalink, title, reddit, media }: PostsProps) {
+  const { onOpen, setPost } = useModal();
+
   function renderMedia(url: string, type: string) {
     if (type === 'video') {
       return (
-        <AspectRatio height="100%" width="100%" ratio={1}>
-          <iframe src={url} scrolling="no" width="100%" height="100%" />
-        </AspectRatio>
+        <video autoPlay={true} loop={true} muted onClick={onOpen}>
+          <source src={url} type="video/mp4"></source>
+        </video>
       );
     }
 
     if (type === 'image') {
       return (
-        <AspectRatio height="100%" width="100%" ratio={1}>
+        <AspectRatio onClick={onOpen} height="100%" width="100%" ratio={1}>
           <Image src={url} scrolling="no" width="100%" height="100%" />
         </AspectRatio>
       );
@@ -37,13 +34,13 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
   }
 
   return (
-    <Flex p={2} w="full" alignItems="center" justifyContent="center">
+    <Flex p={2} alignItems="center" justifyContent="center">
       <Box
         bg={useColorModeValue('white', 'gray.800')}
         maxW="sm"
         borderWidth="1px"
         rounded="lg"
-        shadow="lg"
+        shadow="2xl"
         position="relative"
         transition="margin 0.8s ease, width 0.8s, transform 0.8s ease"
         _hover={{
@@ -55,7 +52,7 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
           _after: {},
         }}
       >
-        <Box width={300} height={400}>
+        <Box width={media?.oembed?.width} height={media?.oembed?.height}>
           {url && media?.oembed?.type && renderMedia(url, media?.oembed?.type)}
 
           {!url && (
@@ -72,7 +69,7 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
           )}
         </Box>
 
-        <Box p="6">
+        {/* <Box p="6">
           {title && <Text fontWeight="bold">{formateTitle(title)}</Text>}
           {!title && <Skeleton width="80%" height="20px" />}
 
@@ -97,7 +94,7 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
             </Text>
             {!reddit && <Skeleton ml="1" width="40%" height="18px" />}
           </Flex>
-        </Box>
+        </Box> */}
       </Box>
     </Flex>
   );
