@@ -1,8 +1,22 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+
+enum Filters {
+  none = 'None',
+  picture = 'Picture',
+  video = 'Video',
+  albumns = 'Albumns',
+}
+
+enum Sort {
+  random = 'Random',
+  hot = 'Hot',
+  top = 'Top',
+  new = 'New',
+}
 
 interface Filter {
-  filter: 'none' | 'picture' | 'video' | 'albumns';
-  sort: 'random' | 'hot' | 'top' | 'new';
+  filter: Filters;
+  sort: Sort;
 }
 
 interface FilterContextData {
@@ -14,4 +28,5 @@ const FilterContext = createContext<FilterContextData>({} as FilterContextData);
 
 const useFilter = () => useContext(FilterContext);
 
-export { FilterContext, useFilter };
+export { FilterContext, useFilter, Sort, Filters };
+export type { Filter };
