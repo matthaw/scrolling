@@ -12,6 +12,7 @@ import {
   useColorModeValue,
   Popover,
   PopoverTrigger,
+  SkeletonCircle,
 } from '@chakra-ui/react';
 import { BsFilter } from 'react-icons/bs';
 
@@ -45,6 +46,9 @@ function Navbar() {
     console.log(`Filter :: ${filter.filter}\nSort :: ${filter.sort}`);
   }
 
+  const reddit =
+    'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9';
+
   return (
     <Box>
       <Flex
@@ -54,6 +58,7 @@ function Navbar() {
         borderBottom={1}
         borderStyle={'solid'}
         borderColor={useColorModeValue('gray.200', 'gray.900')}
+        bg={'gray.50'}
         align={'center'}
         direction={'row'}
         spacing={4}
@@ -185,12 +190,8 @@ function Navbar() {
               </Popover>
             </Box>
           </Stack>
-          <Avatar
-            size={'sm'}
-            src={
-              'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-            }
-          />
+          {reddit && <Avatar src={reddit} size={'sm'} />}
+          {!reddit && <SkeletonCircle size="10" />}
         </Stack>
       </Flex>
     </Box>
