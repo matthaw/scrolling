@@ -26,9 +26,9 @@ function Sidebar() {
   const [subRedditErro, setSubRedditErro] = useState(false);
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+    const delayDebounceFn = setTimeout(async () => {
       try {
-        exists(subReddit);
+        const exist = await exists(subReddit);
       } catch (err) {
         console.log(err);
       }
@@ -65,7 +65,7 @@ function Sidebar() {
     <>
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg="gray.50">
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
             Search Reddit or User
