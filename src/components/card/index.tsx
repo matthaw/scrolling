@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo } from 'react';
 import {
   Flex,
   Box,
@@ -100,4 +100,4 @@ function Card({ url, permalink, title, reddit, media }: PostsProps) {
   );
 }
 
-export { Card };
+export default memo(Card);
