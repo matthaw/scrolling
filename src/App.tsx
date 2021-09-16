@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { theme } from '@chakra-ui/theme';
+// import { theme } from '@chakra-ui/theme';
 import { useDisclosure } from '@chakra-ui/hooks';
 
 import { Navbar } from './components/navbar';
@@ -11,12 +11,22 @@ import { FilterContext, Filter } from './hooks/useFilter';
 import { PostsContext } from './hooks/usePosts';
 import { Posts, request } from './lib/reddit';
 import { FavoriteContext } from './hooks/useFavorite';
+import { ModalContext } from './hooks/useModal';
+import { ModalPost } from './components/modal';
+
+import { theme } from './styles/themes';
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [filter, setFilter] = useState<Filter>({} as Filter);
 
+  const [filter, setFilter] = useState<Filter>({} as Filter);
   const [posts, setPosts] = useState<Posts[]>([]);
+  const {
+    isOpen: isOpenModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useDisclosure();
+  const [post, setPost] = useState<Posts>({} as Posts);
   const [favorites, setFavorite] = useState<Array<string>>([]);
 
   useEffect(() => {
@@ -48,7 +58,18 @@ export const App = () => {
           <FavoriteContext.Provider value={{ favorites, setFavorite }}>
             <Sidebar />
             <PostsContext.Provider value={{ posts, setPosts }}>
-              <Cards />
+              <ModalContext.Provider
+                value={{
+                  isOpen: isOpenModal,
+                  onOpen: onOpenModal,
+                  onClose: onCloseModal,
+                  post,
+                  setPost,
+                }}
+              >
+                <Cards />
+                <ModalPost />
+              </ModalContext.Provider>
             </PostsContext.Provider>
           </FavoriteContext.Provider>
         </FilterContext.Provider>
