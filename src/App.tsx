@@ -5,14 +5,14 @@ import { useDisclosure } from '@chakra-ui/hooks';
 
 import { Navbar } from './components/navbar';
 import { SidebarContext } from './hooks/useSidebar';
-import { Sidebar } from './components/drawer';
+import Sidebar from './components/drawer';
 import { Cards } from './components/cards';
 import { FilterContext, Filter } from './hooks/useFilter';
 import { PostsContext } from './hooks/usePosts';
 import { Posts, request } from './lib/reddit';
 import { FavoriteContext } from './hooks/useFavorite';
 import { ModalContext } from './hooks/useModal';
-import { ModalPost } from './components/modal';
+import ModalPost from './components/modal';
 
 import { theme } from './styles/themes';
 
@@ -56,7 +56,7 @@ export const App = () => {
         <FilterContext.Provider value={{ filter, setFilter }}>
           <Navbar />
           <FavoriteContext.Provider value={{ favorites, setFavorite }}>
-            <Sidebar />
+            {isOpen && <Sidebar />}
             <PostsContext.Provider value={{ posts, setPosts }}>
               <ModalContext.Provider
                 value={{
@@ -67,8 +67,8 @@ export const App = () => {
                   setPost,
                 }}
               >
-                <Cards />
-                <ModalPost />
+                {posts.length >= 1 && <Cards />}
+                {post.id && <ModalPost />}
               </ModalContext.Provider>
             </PostsContext.Provider>
           </FavoriteContext.Provider>
