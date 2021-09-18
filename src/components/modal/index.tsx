@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { memo, useRef } from 'react';
 import {
-  AspectRatio,
   Button,
   Box,
   Icon,
   Link,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -15,10 +15,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { IoArrowUpOutline, IoArrowDownOutline } from 'react-icons/io5';
+import Media from '../media';
 import { useModal } from '../../hooks/useModal';
 
 function ModalPost() {
   const { isOpen, onOpen, onClose } = useModal();
+  const { post } = useModal();
 
   function formateTitle(text: string) {
     return text.length >= 100 ? text.slice(0, 70) + ' ...' : text;
@@ -29,43 +31,40 @@ function ModalPost() {
       isCentered
       onClose={onClose}
       isOpen={isOpen}
-      motionPreset="slideInBottom"
-      size="xl"
+      motionPreset="slideInRight"
+      size="md"
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          {formateTitle('I can’t express how much I like this lol')}
-        </ModalHeader>
+        <ModalHeader>{formateTitle(post.title)}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <AspectRatio ratio={1}>
-            <iframe
-              src={
-                'https://preview.redd.it/ki399ptydjn71.gif?width=640&format=mp4&s=6221c10d484dffbf933e8a5f45eaa2f5fc611bdb'
-              }
-              scrolling="no"
-              width="80%"
-              height="80%"
-            />
-          </AspectRatio>
-        </ModalBody>
+        <Box width="100%" height="10%">
+          {post.url &&
+            Media({
+              post,
+              onOpen,
+              muted: true,
+              autoPlay: true,
+              controls: true,
+              loop: true,
+            })}
+        </Box>
         <ModalFooter justifyContent="space-between">
           <Box>
             <Text>
               Visit post{' '}
               <Link
                 color={'orange.400'}
-                href={`https://www.reddit.com/r/gaming/comments/poc2f5/i_cant_express_how_much_i_like_this_lol/`}
+                href={`https://www.reddit.com${post.permalink}`}
                 target="_blank"
               >
-                r/stalker
+                {post.subreddit_name_prefixed}
               </Link>
             </Text>
             <Box>
               <Box display="inline-flex" m="1">
                 <Icon as={IoArrowUpOutline} h="5" w="5" color="orange.400" />
-                <Text>325</Text>
+                <Text>{post.ups - post.downs}</Text>
                 <Icon as={IoArrowDownOutline} h="5" w="5" color="red.400" />
               </Box>
             </Box>
@@ -79,7 +78,7 @@ function ModalPost() {
                 href={`https://www.reddit.com/user/Knowledgefirework/`}
                 target="_blank"
               >
-                u/Knowledgefirework
+                u/{post.author}
               </Link>
             </Text>
 
@@ -104,4 +103,4 @@ function ModalPost() {
   );
 }
 
-export { ModalPost };
+export default memo(ModalPost);
