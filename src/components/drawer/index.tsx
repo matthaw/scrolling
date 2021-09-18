@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button } from '@chakra-ui/button';
 import { Icon } from '@chakra-ui/icons';
 import { InputGroup, Input, InputLeftAddon } from '@chakra-ui/input';
@@ -23,15 +23,30 @@ function Sidebar() {
   const { isOpen, onOpen, onClose } = useSidebar();
   const { favorites, setFavorite } = useFavorite();
   const [subReddit, setSubReddit] = useState('');
-  const [subRedditErro, setSubRedditErro] = useState(false);
+  const [subRedditErro, setSubRedditErro] = useState<boolean>();
 
   useEffect(() => {
+    setSubRedditErro(false);
+
     const delayDebounceFn = setTimeout(async () => {
-      try {
-        const exist = await exists(subReddit);
-      } catch (err) {
-        console.log(err);
+      if (subReddit.length <= 3) {
+        setSubRedditErro(true);
+        return;
       }
+
+      console.log('Request');
+
+      // try {
+      //   // const exist = await exists(subReddit);
+      //   if (exist) {
+      //     setSubRedditErro(false);
+      //   } else {
+      //     setSubRedditErro(true);
+      //   }
+      // } catch (err) {
+      //   setSubRedditErro(true);
+      //   console.log(err);
+      // }
     }, 2000);
 
     return () => clearTimeout(delayDebounceFn);
@@ -102,7 +117,7 @@ function Sidebar() {
                 )}
               </Box>
 
-              {subReddit && (
+              {subReddit && !subRedditErro && (
                 <Stack direction="row" justifyContent={'space-between'}>
                   <Text fontSize="sm">{subReddit}</Text>
                   <Icon
@@ -163,4 +178,4 @@ function Sidebar() {
   );
 }
 
-export { Sidebar };
+export default memo(Sidebar);
