@@ -1,39 +1,68 @@
-import { Grid } from '@chakra-ui/layout';
-import React, { ReactNode } from 'react';
+import { Grid, Flex } from '@chakra-ui/layout';
+import React, { useEffect } from 'react';
 import { useFilter } from '../../hooks/useFilter';
 import { usePosts } from '../../hooks/usePosts';
-import { Card } from '../card';
+import { Posts, request } from '../../lib/reddit';
+import Card from '../card';
 
 function Cards() {
   const { filter, setFilter } = useFilter();
   const { posts, setPosts } = usePosts();
 
-  function renderPosts(): ReactNode {
-    if (posts.length >= 1) {
-      return posts.map((post) => (
-        <Card
-          key={post.id}
-          id={post.id}
-          title={post.title}
-          permalink={post.permalink}
-          reddit={post.reddit}
-          url={post.url}
-          media={post.media}
-        />
-      ));
+  useEffect(() => {
+    async function requestPosts() {
+      const posts = await request({ name: 'gifs' });
+      setPosts(posts);
     }
 
-    let card: ReactNode[] = [];
+    requestPosts();
+  }, []);
 
-    for (let i = 0; i < 9; i++) {
-      card.push(<Card key={i} />);
-    }
+  function renderPosts() {
+    if (!posts) return;
 
-    return card;
+    let last = Math.round(posts.length / 3);
+
+    const fristListsPosts = posts.slice(0, last) as unknown as Posts[];
+    const secondListsPosts = posts.slice(
+      last,
+      last + last
+    ) as unknown as Posts[];
+    const thirdListsPosts = posts.slice(
+      last + last,
+      last + last + last
+    ) as unknown as Posts[];
+
+    return (
+      <>
+        <Flex flexDirection="column">
+          {fristListsPosts.map((post) => (
+            <Card key={post.id} post={post} />
+          ))}
+        </Flex>
+
+        <Flex flexDirection="column">
+          {secondListsPosts.map((post) => (
+            <Card key={post.id} post={post as Posts} />
+          ))}
+        </Flex>
+
+        <Flex flexDirection="column">
+          {thirdListsPosts.map((post) => (
+            <Card key={post.id} post={post as Posts} />
+          ))}
+        </Flex>
+      </>
+    );
   }
 
   return (
-    <Grid gridTemplateColumns="repeat(4, 1fr)" overflowX="hidden">
+    <Grid
+      gridTemplateColumns="repeat(3, 1fr)"
+      overflowX="hidden"
+      overflowY="hidden"
+      mb="10%"
+    >
       {renderPosts()}
     </Grid>
   );
