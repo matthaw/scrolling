@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Flex, Box, Skeleton, useColorModeValue } from '@chakra-ui/react';
 
 import Media from '../media/index';
@@ -19,7 +19,7 @@ function Card({ post }: CardProps) {
         maxW="sm"
         borderWidth="1px"
         rounded="lg"
-        shadow="2xl"
+        shadow="lg"
         position="relative"
         transition="margin 0.8s ease, width 0.8s, transform 0.8s ease"
         _hover={{
@@ -63,4 +63,4 @@ function Card({ post }: CardProps) {
   );
 }
 
-export default memo(Card);
+export default Card;

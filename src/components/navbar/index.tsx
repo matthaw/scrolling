@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useDisclosure } from '@chakra-ui/hooks';
 import {
   Avatar,
   Box,
@@ -16,16 +17,23 @@ import {
 } from '@chakra-ui/react';
 import { BsFilter } from 'react-icons/bs';
 
-import { useSidebar } from '../../hooks/useSidebar';
 import { Filters, Sort, useFilter } from '../../hooks/useFilter';
+import Sidebar from '../../components/drawer';
+
+interface NavbarProps {
+  onOpen?: () => void;
+}
 
 function Navbar() {
-  const { isOpen, onOpen, onClose } = useSidebar();
   const { filter, setFilter } = useFilter();
 
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const linkHoverColor = useColorModeValue('gray.800', 'white');
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+
+  // const { isOpen, onOpen, onClose } = useSidebar();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     setFilter({
@@ -50,151 +58,154 @@ function Navbar() {
     'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9';
 
   return (
-    <Box>
-      <Flex
-        minH={'60px'}
-        py={{ base: 4 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-        bg={'gray.50'}
-        align={'center'}
-        direction={'row'}
-        spacing={4}
-      >
-        <Stack
-          flex={{ base: 1, md: '1' }}
-          verticalAlign={'center'}
+    <>
+      <Box>
+        <Flex
+          minH={'60px'}
+          py={{ base: 4 }}
+          px={{ base: 4 }}
+          borderBottom={1}
+          borderStyle={'solid'}
+          borderColor={useColorModeValue('gray.200', 'gray.900')}
+          bg={'gray.50'}
+          align={'center'}
           direction={'row'}
-          spacing={6}
-          justifyContent={'space-between'}
+          spacing={4}
         >
-          <Button
-            onClick={onOpen}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'orange.400'}
-            href={'#'}
-            _hover={{
-              bg: 'orange.300',
-            }}
+          <Stack
+            flex={{ base: 1, md: '1' }}
+            verticalAlign={'center'}
+            direction={'row'}
+            spacing={6}
+            justifyContent={'space-between'}
           >
-            Search
-          </Button>
-          <Stack direction={'row'} verticalAlign={'center'}>
-            <Box>
-              <Popover trigger={'hover'} placement={'bottom-start'}>
-                <PopoverTrigger>
-                  <Link
-                    p={2}
-                    href="#"
-                    fontSize={'lg'}
-                    fontWeight={600}
-                    display={{ base: 'none', md: 'inline-flex' }}
-                    color={linkColor}
-                    _hover={{
-                      textDecoration: 'none',
-                      color: linkHoverColor,
-                    }}
-                  >
-                    Filter
-                  </Link>
-                </PopoverTrigger>
+            <Button
+              onClick={onOpen}
+              display={{ base: 'none', md: 'inline-flex' }}
+              fontSize={'sm'}
+              fontWeight={600}
+              color={'white'}
+              bg={'orange.400'}
+              href={'#'}
+              _hover={{
+                bg: 'orange.300',
+              }}
+            >
+              Search
+            </Button>
+            <Stack direction={'row'} verticalAlign={'center'}>
+              <Box>
+                <Popover trigger={'hover'} placement={'bottom-start'}>
+                  <PopoverTrigger>
+                    <Link
+                      p={2}
+                      href="#"
+                      fontSize={'lg'}
+                      fontWeight={600}
+                      display={{ base: 'none', md: 'inline-flex' }}
+                      color={linkColor}
+                      _hover={{
+                        textDecoration: 'none',
+                        color: linkHoverColor,
+                      }}
+                    >
+                      Filter
+                    </Link>
+                  </PopoverTrigger>
 
-                <PopoverContent
-                  border={0}
-                  boxShadow={'xl'}
-                  bg={popoverContentBgColor}
-                  p={4}
-                  rounded={'xl'}
-                  minW={'sm'}
-                >
-                  <Stack>
-                    <DesktopSubNav
-                      title={Filters.none}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Filters.picture}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Filters.video}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Filters.albumns}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                  </Stack>
-                </PopoverContent>
-              </Popover>
-            </Box>
-            <Box>
-              <Popover trigger={'hover'} placement={'bottom-start'}>
-                <PopoverTrigger>
-                  <Link
-                    p={2}
-                    href="#"
-                    fontSize={'lg'}
-                    fontWeight={600}
-                    display={{ base: 'none', md: 'inline-flex' }}
-                    color={linkColor}
-                    _hover={{
-                      textDecoration: 'none',
-                      color: linkHoverColor,
-                    }}
+                  <PopoverContent
+                    border={0}
+                    boxShadow={'xl'}
+                    bg={popoverContentBgColor}
+                    p={4}
+                    rounded={'xl'}
+                    minW={'sm'}
                   >
-                    Sort
-                  </Link>
-                </PopoverTrigger>
+                    <Stack>
+                      <DesktopSubNav
+                        title={Filters.none}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Filters.picture}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Filters.video}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Filters.albumns}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                    </Stack>
+                  </PopoverContent>
+                </Popover>
+              </Box>
+              <Box>
+                <Popover trigger={'hover'} placement={'bottom-start'}>
+                  <PopoverTrigger>
+                    <Link
+                      p={2}
+                      href="#"
+                      fontSize={'lg'}
+                      fontWeight={600}
+                      display={{ base: 'none', md: 'inline-flex' }}
+                      color={linkColor}
+                      _hover={{
+                        textDecoration: 'none',
+                        color: linkHoverColor,
+                      }}
+                    >
+                      Sort
+                    </Link>
+                  </PopoverTrigger>
 
-                <PopoverContent
-                  border={0}
-                  boxShadow={'xl'}
-                  bg={popoverContentBgColor}
-                  p={4}
-                  rounded={'xl'}
-                  minW={'sm'}
-                >
-                  <Stack>
-                    <DesktopSubNav
-                      title={Sort.random}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Sort.top}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Sort.hot}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                    <DesktopSubNav
-                      title={Sort.new}
-                      label={''}
-                      setFilters={setFilters}
-                    />
-                  </Stack>
-                </PopoverContent>
-              </Popover>
-            </Box>
+                  <PopoverContent
+                    border={0}
+                    boxShadow={'xl'}
+                    bg={popoverContentBgColor}
+                    p={4}
+                    rounded={'xl'}
+                    minW={'sm'}
+                  >
+                    <Stack>
+                      <DesktopSubNav
+                        title={Sort.random}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Sort.top}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Sort.hot}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                      <DesktopSubNav
+                        title={Sort.new}
+                        label={''}
+                        setFilters={setFilters}
+                      />
+                    </Stack>
+                  </PopoverContent>
+                </Popover>
+              </Box>
+            </Stack>
+            {reddit && <Avatar src={reddit} size={'sm'} />}
+            {!reddit && <SkeletonCircle size="10" />}
           </Stack>
-          {reddit && <Avatar src={reddit} size={'sm'} />}
-          {!reddit && <SkeletonCircle size="10" />}
-        </Stack>
-      </Flex>
-    </Box>
+        </Flex>
+      </Box>
+      {isOpen && <Sidebar isOpen={isOpen} onClose={onClose} />}
+    </>
   );
 }
 

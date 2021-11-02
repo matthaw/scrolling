@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { Button } from '@chakra-ui/button';
 import { Icon } from '@chakra-ui/icons';
 import { InputGroup, Input, InputLeftAddon } from '@chakra-ui/input';
@@ -17,40 +17,19 @@ import { AiFillStar } from 'react-icons/ai';
 
 import { useSidebar } from '../../hooks/useSidebar';
 import { useFavorite } from '../../hooks/useFavorite';
-import { exists } from '../../lib/reddit';
+import { useDisclosure } from '@chakra-ui/hooks';
 
-function Sidebar() {
-  const { isOpen, onOpen, onClose } = useSidebar();
+interface SideBarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function Sidebar({ isOpen, onClose }: SideBarProps) {
   const { favorites, setFavorite } = useFavorite();
   const [subReddit, setSubReddit] = useState('');
   const [subRedditErro, setSubRedditErro] = useState<boolean>();
 
-  useEffect(() => {
-    setSubRedditErro(false);
-
-    const delayDebounceFn = setTimeout(async () => {
-      if (subReddit.length <= 3) {
-        setSubRedditErro(true);
-        return;
-      }
-
-      console.log('Request');
-
-      // try {
-      //   // const exist = await exists(subReddit);
-      //   if (exist) {
-      //     setSubRedditErro(false);
-      //   } else {
-      //     setSubRedditErro(true);
-      //   }
-      // } catch (err) {
-      //   setSubRedditErro(true);
-      //   console.log(err);
-      // }
-    }, 2000);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [subReddit]);
+  const inputRedditRef = useRef<HTMLInputElement>({} as HTMLInputElement);
 
   function remove(favorite: string) {
     setFavorite(favorites.filter((_, i) => i !== favorites.indexOf(favorite)));
@@ -65,6 +44,11 @@ function Sidebar() {
   function append(favorite: string) {
     setFavorite([...favorites, favorite]);
 
+    // Clean input reddit
+    setSubReddit('');
+    inputRedditRef.current.value = '';
+
+    // Saving favorites reddits
     localStorage.removeItem('@scroller/favorites');
     localStorage.setItem(
       '@scroller/favorites',
@@ -96,6 +80,7 @@ function Sidebar() {
                   <Input
                     type="text"
                     id="reddit"
+                    ref={inputRedditRef}
                     placeholder="Please enter reddit or user"
                     focusBorderColor={focusBorderColor()}
                     onKeyUp={(event) => {
